@@ -18,7 +18,7 @@ function App() {
     data.append('bgcolor', bgcolor);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/extract-first-page', data, {
+      const response = await axios.post('https://creative-generator-react-w3l7-e5dz5e8pa.vercel.app/api/extract-first-page', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setPreview(response.data); // Store the response for preview
@@ -38,7 +38,7 @@ function App() {
       });
 
       // Get normalized filename from the backend
-      const normalizedResponse = await axios.post('http://localhost:5000/api/normalize-filename', {
+      const normalizedResponse = await axios.post('https://creative-generator-react-w3l7-e5dz5e8pa.vercel.app/api/normalize-filename', {
         filename: preview.pdf_filename,
       });
       const downloadFilename = normalizedResponse.data.normalized_filename;
