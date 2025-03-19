@@ -31,7 +31,7 @@ const Form = ({ onSubmit }) => {
   // Fetch dropdown options from the backend API
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/dropdown-options')
+      .get('REACT_APP_BACKEND_URL/api/dropdown-options')
       .then((response) => {
         setDropdownOptions(response.data);
       })
