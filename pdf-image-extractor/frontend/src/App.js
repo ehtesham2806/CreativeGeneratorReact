@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import Form from './components/Form';
+import API_BASE_URL from "../src/config";
 
 function App() {
   const [preview, setPreview] = useState(null);
@@ -18,7 +19,7 @@ function App() {
     data.append('bgcolor', bgcolor);
 
     try {
-      const response = await axios.post('https://creative-generator-react-api.vercel.app/api/extract-first-page', data, {
+      const response = await axios.post(`${API_BASE_URL}/api/extract-first-page`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setPreview(response.data); // Store the response for preview
@@ -38,7 +39,7 @@ function App() {
       });
 
       // Get normalized filename from the backend
-      const normalizedResponse = await axios.post('https://creative-generator-react-api.vercel.app/api/normalize-filename', {
+      const normalizedResponse = await axios.post(`${API_BASE_URL}/api/normalize-filename`, {
         filename: preview.pdf_filename,
       });
       const downloadFilename = normalizedResponse.data.normalized_filename;
@@ -65,7 +66,10 @@ function App() {
                 <h2 className="text-xl font-semibold text-gray-800">Creative Preview</h2>
                 <button
                   onClick={handleDownload}
-                  className="inline-flex items-center px-6 py-3 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                  className="cursor-pointer inline-flex items-center px-6 py-3 text-white text-xs rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                  style={{
+                    backgroundColor: preview.bgcolor || "green",
+                  }}
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -73,7 +77,7 @@ function App() {
                   Download Creative
                 </button>
               </div>
-              <div className="border rounded-lg overflow-hidden p-5">
+              <div className="border border-gray-100 rounded-lg overflow-hidden p-5">
                 <div
                   ref={previewRef} // Attach ref to the styled div
                   className={`background ${preview.is_landscape ? 'landscape' : 'portrait'}`}

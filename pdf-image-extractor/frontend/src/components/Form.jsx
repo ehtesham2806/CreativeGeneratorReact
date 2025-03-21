@@ -3,6 +3,7 @@ import axios from 'axios';
 import $ from 'jquery';
 import 'select2/dist/css/select2.min.css';
 import 'select2';
+import API_BASE_URL from "../config.js";
 
 const useSelect2 = (options) => {
   const selectRef = useRef(null);
@@ -31,7 +32,7 @@ const Form = ({ onSubmit }) => {
   // Fetch dropdown options from the backend API
   useEffect(() => {
     axios
-      .get('https://creative-generator-react-api.vercel.app/api/dropdown-options')
+      .get(`${API_BASE_URL}/api/dropdown-options`)
       .then((response) => {
         setDropdownOptions(response.data);
       })
