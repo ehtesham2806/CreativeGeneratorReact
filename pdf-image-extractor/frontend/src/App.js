@@ -66,7 +66,7 @@ function App() {
                 <h2 className="text-xl font-semibold text-gray-800">Creative Preview</h2>
                 <button
                   onClick={handleDownload}
-                  className="cursor-pointer inline-flex items-center px-6 py-3 text-white text-xs rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                  className="cursor-pointer inline-flex items-center px-6 py-3 text-white text-xs rounded-lg hover:bg-green-700 focus:outline-none transition-colors"
                   style={{
                     backgroundColor: preview.bgcolor || "green",
                   }}
