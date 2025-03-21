@@ -31,7 +31,7 @@ const Form = ({ onSubmit }) => {
   // Fetch dropdown options from the backend API
   useEffect(() => {
     axios
-      .get('REACT_APP_BACKEND_URL/api/dropdown-options')
+      .get('https://creative-generator-react-api.vercel.app/api/dropdown-options')
       .then((response) => {
         setDropdownOptions(response.data);
       })
