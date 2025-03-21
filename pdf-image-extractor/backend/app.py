@@ -12,9 +12,6 @@ from dropdowns import DROPDOWN_OPTIONS  # Import dropdown options
 app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
 CORS(app)
 
-# Increase max upload size (50MB)
-app.config['MAX_CONTENT_LENGTH'] = 150 * 1024 * 1024  # 150MB
-
 # Normalize filename function (identical to old code)
 def normalize_filename(pdf_name):
     """
