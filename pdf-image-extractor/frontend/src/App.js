@@ -6,7 +6,8 @@ import API_BASE_URL from "../src/config";
 
 function App() {
   const [preview, setPreview] = useState(null);
-  const previewRef = useRef(null); // Ref to capture the styled preview
+  const [isLoading, setIsLoading] = useState(false);
+  const previewRef = useRef(null);
 
   const handleFormSubmit = async (formData) => {
     const { pdfFile, templateSelect, width, height, bgcolor } = formData;
@@ -19,12 +20,15 @@ function App() {
     data.append('bgcolor', bgcolor);
 
     try {
+      setIsLoading(true);
       const response = await axios.post(`${API_BASE_URL}/api/extract-first-page`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setPreview(response.data); // Store the response for preview
+      setPreview(response.data);
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -32,19 +36,16 @@ function App() {
     if (!preview || !previewRef.current) return;
 
     try {
-      // Capture the styled preview with html2canvas
       const canvas = await html2canvas(previewRef.current, {
-        backgroundColor: null, // Preserve the bgcolor from CSS
-        scale: 2, // Higher resolution
+        backgroundColor: null,
+        scale: 2,
       });
 
-      // Get normalized filename from the backend
       const normalizedResponse = await axios.post(`${API_BASE_URL}/api/normalize-filename`, {
         filename: preview.pdf_filename,
       });
       const downloadFilename = normalizedResponse.data.normalized_filename;
 
-      // Trigger download
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/jpeg');
       link.download = downloadFilename;
@@ -60,7 +61,12 @@ function App() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left side - Preview */}
         <div className="lg:w-2/3">
-          {preview ? (
+          {isLoading ? (
+            <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-[500px] text-gray-500">
+              <div className="spinner"></div>
+              <p className="text-lg mt-4">Generating your creative...</p>
+            </div>
+          ) : preview ? (
             <div className="bg-white rounded-xl shadow-md p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">Creative Preview</h2>
@@ -79,7 +85,7 @@ function App() {
               </div>
               <div className="border border-gray-100 rounded-lg overflow-hidden p-5">
                 <div
-                  ref={previewRef} // Attach ref to the styled div
+                  ref={previewRef}
                   className={`background ${preview.is_landscape ? 'landscape' : 'portrait'}`}
                   style={{
                     backgroundColor: preview.bgcolor,
