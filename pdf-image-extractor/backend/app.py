@@ -33,32 +33,35 @@ def normalize_filename(pdf_name):
     print(f"Normalized result: {result}")
     return result
 
-# Extract first page function (matches old code, with optional scaling from new code)
+# Extract first page function (updated with suggested code change)
 def extract_first_page(pdf_bytes, filename, width=800, height=600, bgcolor="#ffffff", apply_scaling=False):
     pdf_document = fitz.open(stream=pdf_bytes, filetype="pdf")
     first_page = pdf_document[0]
-    pix = first_page.get_pixmap(matrix=fitz.Matrix(300/72, 300/72))  # High-res rendering, same as old code
+    
+    # Ensure scaling is set to 1
+    pix = first_page.get_pixmap(matrix=fitz.Matrix(1, 1))  # No scaling applied
     img_data = pix.tobytes("jpeg")
     img = Image.open(io.BytesIO(img_data))
-    img_width, img_height = img.size
-    is_landscape = img_width > img_height
 
-    # Optional server-side scaling (from your new code, disabled by default to match old code)
-    if apply_scaling:
-        background = Image.new('RGB', (width, height), bgcolor)
-        img = img.convert('RGB')
-        img.thumbnail((width, height), Image.Resampling.LANCZOS)
-        img_left = (width - img.size[0]) // 2
-        img_top = (height - img.size[1]) // 2
-        background.paste(img, (img_left, img_top))
-        output = io.BytesIO()
-        background.save(output, format="JPEG")
-        img_bytes = output.getvalue()
+    # Preserve aspect ratio
+    original_width, original_height = img.size
+    aspect_ratio = original_width / original_height
+
+    if width / height > aspect_ratio:
+        width = int(height * aspect_ratio)
     else:
-        img_bytes = img_data  # Raw image, as in old code
+        height = int(width / aspect_ratio)
+
+    # Resize the image while maintaining aspect ratio
+    img = img.resize((width, height), Image.ANTIALIAS)
+
+    # Compress the image
+    output = io.BytesIO()
+    img.save(output, format="JPEG", quality=85)  # Compression with quality set to 85
+    compressed_img_bytes = output.getvalue()
 
     pdf_document.close()
-    return img_bytes, is_landscape, filename
+    return compressed_img_bytes, img.width > img.height, filename
 
 # API Routes
 @app.route('/api/dropdown-options', methods=['GET'])

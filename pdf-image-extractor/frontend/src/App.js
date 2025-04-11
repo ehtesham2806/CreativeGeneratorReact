@@ -36,9 +36,10 @@ function App() {
     if (!preview || !previewRef.current) return;
 
     try {
+      // Ensure no scaling is applied
       const canvas = await html2canvas(previewRef.current, {
         backgroundColor: null,
-        scale: 2,
+        scale: 1, // Explicitly set scale to 1
       });
 
       const normalizedResponse = await axios.post(`${API_BASE_URL}/api/normalize-filename`, {
@@ -89,14 +90,22 @@ function App() {
                   className={`background ${preview.is_landscape ? 'landscape' : 'portrait'}`}
                   style={{
                     backgroundColor: preview.bgcolor,
-                    width: `${preview.width}px`,
-                    height: `${preview.height}px`,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: `${preview.width}px`, // Use exact width from backend
+                    height: `${preview.height}px`, // Use exact height from backend
                   }}
                 >
                   <img
                     src={`data:image/jpeg;base64,${preview.image_data}`}
                     alt="Preview"
                     className="preview-image"
+                    style={{
+                        maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain', // Ensures the image fits without stretching
+                    }}
                   />
                 </div>
               </div>
