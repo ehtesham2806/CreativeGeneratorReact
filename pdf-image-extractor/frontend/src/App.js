@@ -38,7 +38,7 @@ function App() {
     try {
       const canvas = await html2canvas(previewRef.current, {
         backgroundColor: null,
-        scale: 1,
+        scale: 2,
       });
 
       const normalizedResponse = await axios.post(`${API_BASE_URL}/api/normalize-filename`, {
